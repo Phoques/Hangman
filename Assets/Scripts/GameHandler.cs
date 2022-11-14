@@ -7,45 +7,71 @@ using System.Linq;
 
 public class GameHandler : MonoBehaviour
 {
-    public GameObject buttonPrefab;
-    public List<string> letters = new List<string>();
-    public List<string> words = new List<string>();
-    public char[] wordLetters;
-    public Text[] displayLetters;
-    public Vector3 buttonLocation;
-    public GameObject letterContainer;
-    public GameObject[] hungman;
-    public GameObject wordDisplay;
-    public int incorrectGuessIndex;
 
-    //To go through the letters by using a foreach loop.
+    #region Singleton
+    public static GameHandler gameHandlerInstance;
+    public GameHandler GameHandlerInstance
+    {
+        set
+        {
+            if (gameHandlerInstance == null)
+            {
+                gameHandlerInstance = this;
+            }
+        }
+    }
+    #endregion
+    #region Words and Guessing
+    //list of all words player can guess from in the game, which is populated in inspector.
+    public List<string> words = new List<string>();
+    //char array of the word that was chosen, split into the indidividual letters of the word.
+    public char[] wordLetters;
+    #endregion
+    #region Keyboard Display
+    //list of alphabet letters
+    public List<string> letters = new List<string>();
+    //spawn position for the keyboard
+    public Vector3 buttonLocation;
+    //container to parent the keyboard to
+    public GameObject letterContainer;
+    #endregion
+    #region Word Display
+    //text component array of the word display
+    public Text[] displayLetters;
+    //parent object for the word display
+    public GameObject wordDisplay;
+    #endregion
+    //prefab for the keyboard and the word guess display
+    public GameObject buttonPrefab;
+    //hangman art array
+    public GameObject[] hungman;
+    //incorrect guess marker
+    public int incorrectGuessIndex;
+    public GameObject losePanel;
+    public GameObject winPanel;
+
+    //Set the instance to this script so that the button script can easily talk to the only gamehandler in the scene
+    private void Awake()
+    {
+        GameHandlerInstance = gameHandlerInstance;
+    }
+    
     private void Start()
     {
+        //when the game starts we need to choose a word, then create the players keyboard and display the word that the player is going to guess
         ChooseWord();
         CreateKeyBoard();
         SpawnLetters();
+        //turn off the hang man display for the start of the round
         for (int i = 0; i < hungman.Length; i++) // For every index item in the hangman array, set them as inactive to begin with.
         {
             hungman[i].SetActive(false);
         }
-
-        //ShowCorrectLetter();
-
-
-        //guessesLeft = new GameObject[guessesLeft];    
-    }
-
-    private void Update()
-    {
-        if(Input.GetKeyDown(KeyCode.F))
-        { 
-            DrawHangman();
-            
-        }
-
+        //Initialise win & lose panel as false on startup.
+        losePanel.SetActive(false);
+        winPanel.SetActive(false);
         
     }
-
     void CreateKeyBoard() // This function only handles the keyboard.
     {
         //Button Array is being reset to the number of letters in the list.
@@ -79,41 +105,104 @@ public class GameHandler : MonoBehaviour
 
     }
     public void DrawHangman()
-    {// Index = 0, if 0 is less than the length of the Hungman GO array, add one to the index. Which then executes the below, which will draw each piece one at a time. (Draws all pieces at once. So need to review)
-     //    for(int i = 0; i < hungman.Length; i++)
-     //    {// If hungman array is NOT active.
-     //        if (!hungman[i].activeSelf)
-     //        { // Set as active.
-     //            hungman[i].SetActive(true);
-     //        }
-     //        return;
-     //    }
-
+    {
+        //hangman display is set to inactive in start
         if (!hungman[incorrectGuessIndex].activeSelf)
         {
-           hungman[incorrectGuessIndex].SetActive(true);
+            //when an incorrect guess is triggered, draw the next hangman element
+            hungman[incorrectGuessIndex].SetActive(true);
         }
-        if (incorrectGuessIndex < 6)
+        //if we are not at the end of our guesses (<= 6 as we need it to tip over to 7 to trigger the lose panel below)
+        if (incorrectGuessIndex <= 6)
         {
+            //increment the guess index by 1
             incorrectGuessIndex++;
 
+        }
+        //If we are at the end of our guesses
+        if (incorrectGuessIndex >= 7)
+        {
+            Debug.Log("You LOSE");
+            //Wait half a second before triggering the 'LosePanel' Function.
+            Invoke("LosePanel", 0.5f);
+        }
+
+    }
+
+    void LosePanel()
+    {//If GO Panel is not null
+        if(losePanel != null)
+        { // Set Panel as active
+            losePanel.SetActive(true);
+        }
+    }
+
+    void WinPanel()
+    {//If GO Panel is not null
+        if (winPanel != null)
+        {// Set Panel as active
+            winPanel.SetActive(true);
+        }
+    }
+
+   
+
+    //this letter is the letter that we guessed by pressing a button, it is sent to this scripts instance from the button listener event
+    public void LetterGuess(char guessedLetter)
+    {
+        //temp bool to see if we got a letter correct
+        bool correctGuess = false;
+        //for every character in side of our character array called wordLetters
+        foreach (char c in wordLetters)
+        {
+            //if the letter in wordLetters is the same as our guessed letter
+            if (c == guessedLetter)
+            {
+                //set the temp bool to true
+                correctGuess = true;
+                Debug.Log("Got Letter Yay" + ": " + guessedLetter);
+            }
+        }
+        //if we have correct letters guessed
+        if (correctGuess)
+        {
+            //loop through every element of display letters buttons
+            for (int i = 0; i < displayLetters.Length; i++)
+            {
+                //change the letter display if the current elements letter is our guessed letter
+                if (guessedLetter == wordLetters[i])
+                {//display letters array of buttons, has a text child, and that child now = the passed in guessed letter and is converted to a string. Which changes the '_' to the letter
+                    displayLetters[i].text = guessedLetter.ToString();
+                }
+            }
+        }
+        //if bool isnt true here then there were no correct letters
+        if (!correctGuess)
+        {
+            DrawHangman();
+        }
+        //temp bool to see if all letters have been guessed
+        bool notAllLettersGuessed = false;
+        //check to see if all letters are guessed
+        for (int i = 0; i < displayLetters.Length; i++)
+        {
+            //when looping and checking if out display letters are set to _
+            if (displayLetters[i].text == "_")
+            {
+                //then indicate we havent finished guessing and need more words
+                notAllLettersGuessed = true;
+                Debug.Log("more Guessed needed");
+                return;
+            }
+        }
+        //if none of our display letters were _ then we have guessed all letters and the word is complete
+        if (!notAllLettersGuessed)
+        {
+            Debug.Log("YAY Word GUESSED!");
+            WinPanel();
         }
     }
 
 
-    //public void ShowCorrectLetter()
-    //{
-
-    //    foreach (char c in wordLetters)
-    //    {
-
-    //        if (wordLetters[c].Contains(letters[i]))
-    //        {
-
-    //        }
-    //    }
-    //}
-
-
-
+    
 }
