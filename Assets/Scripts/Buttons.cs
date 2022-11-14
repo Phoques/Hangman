@@ -32,6 +32,8 @@ public class Buttons : MonoBehaviour
     public void letterGuess()
     {
         button.interactable = false;
+        //gameHandler.ShowCorrectLetter();
+
 
         //if (isIncorrect)
         //{

@@ -989,12 +989,12 @@ MonoBehaviour:
   words:
   - WATERBOTTLE
   - OXYMORON
-  - ASYMPTOMATIC
-  - CORONA
+  - CONTROLLER
+  - FACTORY
   - PANDEMIC
-  - LOCKDOWN
-  - BULBASAUR
-  - CHARZAR
+  - HANGMAN
+  - COMPUTER
+  - DEVELOPMENT
   - PIRATE
   - GODZILLA
   wordLetters: 
