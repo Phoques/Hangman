@@ -104,17 +104,16 @@ public class GameHandler : MonoBehaviour
     //public void ShowCorrectLetter()
     //{
 
-
-
-    //    foreach(char c in wordLetters)
+    //    foreach (char c in wordLetters)
     //    {
 
-    //        if (wordLetters[c].Contains(letters.text)){
+    //        if (wordLetters[c].Contains(letters[i]))
+    //        {
 
     //        }
     //    }
     //}
 
-    
+
 
 }
