@@ -199,7 +199,7 @@ public class GameHandler : MonoBehaviour
         if (!notAllLettersGuessed)
         {
             Debug.Log("YAY Word GUESSED!");
-            WinPanel();
+            Invoke("WinPanel", 0.5f);
         }
     }
 
