@@ -7,7 +7,7 @@ using System;
 
 public class Buttons : MonoBehaviour
 {
-
+    #region Button handling
     //component button but empty so we can pass through our Button set up and Letter guess behaviour
     Button button;
 
@@ -38,6 +38,6 @@ public class Buttons : MonoBehaviour
         GameHandler.gameHandlerInstance.LetterGuess(letter); // not only passes in the 'letter' variable we have set here, but also calls the 'LetterGuess' function in gamehandler.
     }
 
-
+    #endregion
 
 }

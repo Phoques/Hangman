@@ -7,6 +7,8 @@ using UnityEngine.UI;
 
 public class MenuHandler : MonoBehaviour
 {
+    #region Scene and Panel control
+
     public GameObject pausePanel;
     private void Awake()
     {
@@ -43,4 +45,5 @@ public class MenuHandler : MonoBehaviour
             pausePanel.SetActive(false);
         }
     }
+    #endregion
 }

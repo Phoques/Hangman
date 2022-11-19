@@ -26,6 +26,8 @@ public class GameHandler : MonoBehaviour
     public List<string> words = new List<string>();
     //char array of the word that was chosen, split into the indidividual letters of the word.
     public char[] wordLetters;
+    //incorrect guess marker
+    public int incorrectGuessIndex;
     #endregion
     #region Keyboard Display
     //list of alphabet letters
@@ -41,27 +43,31 @@ public class GameHandler : MonoBehaviour
     //parent object for the word display
     public GameObject wordDisplay;
     #endregion
+    #region GameObjects and Panels
     //prefab for the keyboard and the word guess display
     public GameObject buttonPrefab;
     //hangman art array
     public GameObject[] hungman;
-    //incorrect guess marker
-    public int incorrectGuessIndex;
+    //Panel shown when lost game
     public GameObject losePanel;
+    //Panel shown when win game
     public GameObject winPanel;
+    #endregion
+    #region Awake and Start
 
-    //Set the instance to this script so that the button script can easily talk to the only gamehandler in the scene
     private void Awake()
     {
+    //Set the instance to this script so that the button script can easily talk to the only gamehandler in the scene
         GameHandlerInstance = gameHandlerInstance;
     }
     
     private void Start()
     {
         //when the game starts we need to choose a word, then create the players keyboard and display the word that the player is going to guess
-        ChooseWord();
         CreateKeyBoard();
         SpawnLetters();
+        ChooseWord();
+
         //turn off the hang man display for the start of the round
         for (int i = 0; i < hungman.Length; i++) // For every index item in the hangman array, set them as inactive to begin with.
         {
@@ -72,6 +78,8 @@ public class GameHandler : MonoBehaviour
         winPanel.SetActive(false);
         
     }
+    #endregion
+    #region Gameplay Functions / Behaviours
     void CreateKeyBoard() // This function only handles the keyboard.
     {
         //Button Array is being reset to the number of letters in the list.
@@ -129,21 +137,6 @@ public class GameHandler : MonoBehaviour
 
     }
 
-    void LosePanel()
-    {//If GO Panel is not null
-        if(losePanel != null)
-        { // Set Panel as active
-            losePanel.SetActive(true);
-        }
-    }
-
-    void WinPanel()
-    {//If GO Panel is not null
-        if (winPanel != null)
-        {// Set Panel as active
-            winPanel.SetActive(true);
-        }
-    }
 
    
 
@@ -203,6 +196,23 @@ public class GameHandler : MonoBehaviour
         }
     }
 
+    #endregion
+    #region Panel Behaviours
+    void LosePanel()
+    {//If GO Panel is not null
+        if(losePanel != null)
+        { // Set Panel as active
+            losePanel.SetActive(true);
+        }
+    }
 
-    
+    void WinPanel()
+    {//If GO Panel is not null
+        if (winPanel != null)
+        {// Set Panel as active
+            winPanel.SetActive(true);
+        }
+    }
+    #endregion
+
 }
