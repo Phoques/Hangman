@@ -65,8 +65,9 @@ public class GameHandler : MonoBehaviour
     {
         //when the game starts we need to choose a word, then create the players keyboard and display the word that the player is going to guess
         CreateKeyBoard();
-        SpawnLetters();
+        //Choose Word MUST run before Spawn letters or it will not spawn the letters of the word.
         ChooseWord();
+        SpawnLetters();
 
         //turn off the hang man display for the start of the round
         for (int i = 0; i < hungman.Length; i++) // For every index item in the hangman array, set them as inactive to begin with.
